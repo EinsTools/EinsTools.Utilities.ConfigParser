@@ -179,8 +179,8 @@ public class TestConfiguration
         var data = new Dictionary<string, string?>()
         {
             { "A", "X" },
-            { "B", "$(env:EINSTOOLS_TEST)" },
-            { "C", "$(ENV:EINSTOOLS_TEST)" },
+            { "B", "$(env=EINSTOOLS_TEST)" },
+            { "C", "$(ENV=EINSTOOLS_TEST)" },
             { "D", "$(env:NOT_EXISTING)" }
         };
         
@@ -210,10 +210,10 @@ public class TestConfiguration
             {
                 { "A", $"{tempFile}" },
                 { "B", Guid.NewGuid().ToString()},
-                { "C", "$(file:A)" },
-                { "D", "$(FILE:A)" },
-                { "E", "$(file:NOT_EXISTING)" },
-                { "F", "$(file:B)" }
+                { "C", "$(file=A)" },
+                { "D", "$(FILE=A)" },
+                { "E", "$(file=NOT_EXISTING)" },
+                { "F", "$(file=B)" }
             };
         
             var baseCfg = new ConfigurationBuilder()
@@ -246,7 +246,7 @@ public class TestConfiguration
         var data = new Dictionary<string, string?>
         {
             { "A", "C:\\Program Files" },
-            { "B", "C:\\Program Files\\" },
+            { "B", $"C:\\Program Files{Path.DirectorySeparatorChar}" },
             { "C", "MyApp" },
             { "D", "$(A/)$(C)" },
             { "E", "$(B/)$(C)" }
@@ -259,8 +259,8 @@ public class TestConfiguration
             .AddEinsToolsConfiguration(baseCfg)
             .Build();
         
-        Assert.That(cfg["D"], Is.EqualTo("C:\\Program Files\\MyApp"));
-        Assert.That(cfg["E"], Is.EqualTo("C:\\Program Files\\MyApp"));
+        Assert.That(cfg["D"], Is.EqualTo($"C:\\Program Files{Path.DirectorySeparatorChar}MyApp"));
+        Assert.That(cfg["E"], Is.EqualTo($"C:\\Program Files{Path.DirectorySeparatorChar}MyApp"));
     }
 
     [Test]
@@ -282,5 +282,47 @@ public class TestConfiguration
         
         Assert.That(cfg["C"], Is.EqualTo("Hello Universe"));
         
+    }
+
+    [Test]
+    public void TestPath() {
+        var data = new Dictionary<string, string?> {
+            { "A", "X" },
+            { "B", "$(path=A|Y)" },
+            { "C", "$(path=X|Z)" }
+        };
+        
+        var baseCfg = new ConfigurationBuilder()
+            .AddInMemoryCollection(data)
+            .Build();
+        var cfg = new ConfigurationBuilder()
+            .AddEinsToolsConfiguration(baseCfg)
+            .Build();
+        
+        Assert.That(cfg["A"], Is.EqualTo($"X"));
+        Assert.That(cfg["B"], Is.EqualTo($"X{Path.DirectorySeparatorChar}"));
+        Assert.That(cfg["C"], Is.EqualTo($"Z{Path.DirectorySeparatorChar}"));
+    }
+    
+    [Test]
+    public void TestJoin() {
+        var data = new Dictionary<string, string?> {
+            { "A", "X" },
+            { "B", "Y" },
+            { "C", "$(join=A,B)" },
+            { "D", "$(join=A,Z|XYZ)"}
+        };
+        
+        var baseCfg = new ConfigurationBuilder()
+            .AddInMemoryCollection(data)
+            .Build();
+        var cfg = new ConfigurationBuilder()
+            .AddEinsToolsConfiguration(baseCfg)
+            .Build();
+        
+        Assert.That(cfg["A"], Is.EqualTo($"X"));
+        Assert.That(cfg["B"], Is.EqualTo($"Y"));
+        Assert.That(cfg["C"], Is.EqualTo($"X{Path.DirectorySeparatorChar}Y"));
+        Assert.That(cfg["D"], Is.EqualTo($"X{Path.DirectorySeparatorChar}XYZ"));
     }
 }

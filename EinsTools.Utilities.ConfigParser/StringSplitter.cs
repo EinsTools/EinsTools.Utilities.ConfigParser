@@ -74,13 +74,7 @@ internal static class StringSplitter
                     // end of script
                     var scriptTag = builder.ToString();
                     // split at the first colon
-                    var elements = scriptTag.Split(':', 2);
-                    var r = elements.Length switch
-                    {
-                        1 => new ScriptLiteral(elements[0], "ref"),
-                        2 => new ScriptLiteral(elements[1].TrimStart(), elements[0].TrimEnd()),
-                        _ => throw new Exception("Unexpected input")
-                    };
+                    var r = ScriptLiteral.FromString(scriptTag);
                     result = result.Add(r);
                     builder.Clear();
                     inScript = false;

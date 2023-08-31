@@ -76,20 +76,23 @@ The value of C will be "Hello Goodbye!".
 
 ## Prefixes
 
-You can prefix a reference with the strings "ref:", "env:" or "file:".
+You can prefix a reference with the strings "ref=", "env=" or "file=".
 
-"ref:" will reference a value from the configuration file. This is the default behaviour, if no prefix is used.
-"env:" will reference a value from the environment variables.
-"file:" will reference a value from a file. The value behind the prefix will be interpreted as a reference to
+"ref=" will reference a value from the configuration file. This is the default behaviour, if no prefix is used.
+"env=" will reference a value from the environment variables.
+"file=" will reference a value from a file. The value behind the prefix will be interpreted as a reference to
 another value in the configuration file, which should hold the file name.
+
+Whitespace between the prefix and the reference will be ignored. So `$(env = PATH)` will work as well as
+`$(env=PATH)`.
 
 For example:
 
 ```json
 {
   "A": "./test.txt",
-  "B": "$(env:PATH)",
-  "C": "$(file:C)"
+  "B": "$(env=PATH)",
+  "C": "$(file=C)"
 }
 ```
 
@@ -114,6 +117,19 @@ we will add one. This is useful to combine paths. For example:
 
 The values of D and E will be "C:\\Program Files\\MyApp". Which seperator is used, depends on the operating system.
 It will be a slash on Linux and MacOs and a backslash on Windows.
+
+If you want to combine this mechanism with the default value mechanism, you have to use the slash before the pipe.
+The syntax would be `$(A/|Default)`.
+
+As an alternative you can also use the `path=` prefix. `$(path=A|Default)` will result in the same value as
+`$(A/|Default)`.
+
+You can also join paths by using the `join=` prefix. `$(join=A,B,C)` will result in the same value as
+`$(A/)$(B/)$(C)`. The values must be separated by commas. Whitespace before and after the commas will be ignored.
+
+For the join prefix, the default value mechanism works differently. Each element in the list can have its own
+default value. The syntax is `$(join=A|DefaultA,B|DefaultB,C|DefaultC)`. There is however no way to specify a
+default value for the whole list.
 
 ## Usage
 

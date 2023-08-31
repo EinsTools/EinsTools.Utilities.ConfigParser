@@ -76,7 +76,7 @@ public class TestStringSplitter
     [Test]
     public void TestReplacementWithColon()
     {
-        var result = StringSplitter.Split("$(def:ghi)").ToArray();
+        var result = StringSplitter.Split("$(def=ghi)").ToArray();
         Assert.That(result, Has.Length.EqualTo(1));
         var referenceElement = result[0] as ScriptLiteral;
         Assert.That(referenceElement, Is.Not.Null);
@@ -87,7 +87,7 @@ public class TestStringSplitter
     [Test]
     public void TestReplacementWithColonAndSpace()
     {
-        var result = StringSplitter.Split("$(def: ghi)").ToArray();
+        var result = StringSplitter.Split("$(def= ghi)").ToArray();
         Assert.That(result, Has.Length.EqualTo(1));
         var referenceElement = result[0] as ScriptLiteral;
         Assert.That(referenceElement, Is.Not.Null);
@@ -98,7 +98,7 @@ public class TestStringSplitter
     [Test]
     public void TestReplacementWithColonAndSpaceAndText()
     {
-        var result = StringSplitter.Split("$(def: ghi) jkl").ToArray();
+        var result = StringSplitter.Split("$(def = ghi) jkl").ToArray();
         Assert.That(result, Has.Length.EqualTo(2));
         var referenceElement = result[0] as ScriptLiteral;
         Assert.That(referenceElement, Is.Not.Null);

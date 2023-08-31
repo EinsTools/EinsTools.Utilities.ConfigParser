@@ -48,40 +48,72 @@ internal class EinsToolsConfiguration : IConfigurationProvider
         return sb.ToString();
     }
 
+    private record ValueData(string Value, string DefaultValue, bool EnsureEndingSlash);
+    
     private void ProcessScript(string key, ScriptLiteral script, StringBuilder sb)
     {
 
-        var items = script.Value.Split("|");
-        var prefix = script.Prefix.ToLowerInvariant();
-        if (items.Length > 2)
-            throw new JsonException("Invalid script literal");
-        var val = items[0];
-        var ensureEndingSlash = val.EndsWith('/');
-        if (ensureEndingSlash)
-            val = val[0..^1];
+        ValueData GetValueData() {
+            var items = script.Value.Split("|");
+            if (items.Length > 2)
+                throw new JsonException("Invalid script literal");
+            var val = items[0];
+            var ensureEndingSlash = val.EndsWith('/');
+            if (ensureEndingSlash)
+                val = val[0..^1];
             
-        var defaultValue = items.Length == 2 ? items[1] : "";
+            var defaultValue = items.Length == 2 ? items[1] : "";
+            return new ValueData(val, defaultValue, ensureEndingSlash);
+        }
+        
+        var prefix = script.Prefix.ToLowerInvariant();
+        
         switch (prefix)
         {
             case "env":
             {
-                var e = Environment.GetEnvironmentVariable(val.Trim());
-                Append(sb, e ?? defaultValue, ensureEndingSlash);
+                var valueData = GetValueData();
+                var e = Environment.GetEnvironmentVariable(valueData.Value.Trim());
+                Append(sb, e ?? valueData.DefaultValue, valueData.EnsureEndingSlash);
                 break;
             }
             case "file":
             {
-                var path = RetrieveValue(key, val.Trim(), defaultValue);
+                var valueData = GetValueData();
+                var path = RetrieveValue(key, valueData.Value.Trim(), valueData.DefaultValue);
                 if (!File.Exists(path))
                 {
                     throw new JsonException($"File {path} does not exist");
                 }
-                Append(sb, File.ReadAllText(path), ensureEndingSlash);
+                Append(sb, File.ReadAllText(path), valueData.EnsureEndingSlash);
                 break;
             }
-            case "ref":
-                Append(sb, RetrieveValue(key, val.Trim(), defaultValue), ensureEndingSlash);
+            case "path":
+            {
+                var valueData = GetValueData();
+                var path = RetrieveValue(key, valueData.Value.Trim(), valueData.DefaultValue);
+                Append(sb, path, true);
                 break;
+            }
+            case "join": {
+                var pathElements = script.Value.Split(',');
+                if (pathElements.Length < 2)
+                    throw new JsonException("Invalid script literal");
+                pathElements = pathElements.Select(v => {
+                        var sbTmp = new StringBuilder();
+                        ProcessScript(key, ScriptLiteral.FromString(v.Trim()), sbTmp);
+                        return sbTmp.ToString();
+                    })
+                    .ToArray();
+                Append(sb, Path.Combine(pathElements), false);
+                break;
+            }
+            case "ref": {
+                var valueData = GetValueData();
+                Append(sb, RetrieveValue(key, valueData.Value.Trim(), valueData.DefaultValue),
+                    valueData.EnsureEndingSlash);
+                break;
+            }
             default:
                 throw new JsonException($"Unknown prefix {prefix}");
         }
