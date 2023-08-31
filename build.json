@@ -1,0 +1,27 @@
+{
+    "Major": 0,
+    "Minor": 0,
+    "Patch": 3,
+    "Main": "main",
+    "DevTag": "rc",
+    "Dev": "dev",
+    "PushBranches": [
+        "main",
+        "dev"
+    ],
+    "BuildCommand": {
+        "Command": "pwsh",
+        "Arguments": [
+            "--noprofile",
+            "--nologo",
+            "-noninteractive",
+            "-executionpolicy",
+            "unrestricted",
+            "/c",
+            "./build.ps1"
+        ]
+    },
+    "Projects": [
+        "EinsTools.Utilities.ConfigParser/EinsTools.Utilities.ConfigParser.csproj"
+    ]
+}

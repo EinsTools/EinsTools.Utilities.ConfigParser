@@ -1,0 +1,38 @@
+name: .NET
+
+on:
+  push:
+    branches: [ "*" ]
+  pull_request:
+    branches: [ "*" ]
+
+jobs:
+  build:
+    permissions:
+      contents: write
+      packages: write
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v3
+    - name: Setup .NET
+      uses: actions/setup-dotnet@v3
+      with:
+        dotnet-version: 7.0.x
+    - name: Setup default nuget config
+      run: dotnet new nugetconfig --force
+    - name: Add github to the nuget sources
+      run: dotnet nuget add source https://nuget.pkg.github.com/einstools/index.json --name github --username USERNAME --password ${{ secrets.EINSTOOLS_TOKEN }} --store-password-in-clear-text
+    - name: Restore dotnet tools
+      run: dotnet tool restore
+    - name: Fetch the tags
+      run: git fetch --tags
+    - name: Build the tool
+      run: dotnet bvh .
+    - name: Make artifact available
+      uses: actions/upload-artifact@v3
+      with:
+        name: Nuget Package
+        path: ./publish/ConfigParser  
+    - name: Push package and tags
+      run: pwsh -c "./push.ps1" -NugetToken ${{ secrets.EINSTOOLS_NUGETTOKEN }}
+    

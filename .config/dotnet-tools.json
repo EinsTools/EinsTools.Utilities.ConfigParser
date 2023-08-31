@@ -1,0 +1,12 @@
+{
+  "version": 1,
+  "isRoot": true,
+  "tools": {
+    "einstools.utilities.buildversionhandler": {
+      "version": "0.0.4",
+      "commands": [
+        "bvh"
+      ]
+    }
+  }
+}

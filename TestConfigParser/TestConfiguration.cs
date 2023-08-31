@@ -262,4 +262,25 @@ public class TestConfiguration
         Assert.That(cfg["D"], Is.EqualTo("C:\\Program Files\\MyApp"));
         Assert.That(cfg["E"], Is.EqualTo("C:\\Program Files\\MyApp"));
     }
+
+    [Test]
+    public void TestDefaultValue()
+    {
+        var data = new Dictionary<string, string?>
+        {
+            { "A", "Hello" },
+            { "B", "World" },
+            { "C", "$(A|Goodbye) $(D|Universe)" }
+        };
+        
+        var baseCfg = new ConfigurationBuilder()
+            .AddInMemoryCollection(data)
+            .Build();
+        var cfg = new ConfigurationBuilder()
+            .AddEinsToolsConfiguration(baseCfg)
+            .Build();
+        
+        Assert.That(cfg["C"], Is.EqualTo("Hello Universe"));
+        
+    }
 }
