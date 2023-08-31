@@ -2,13 +2,12 @@
 using System.Diagnostics.CodeAnalysis;
 using System.Text;
 using System.Text.Json;
-using EinsTools.Utilities.StringHelper;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Primitives;
 
 namespace EinsTools.Utilities.ConfigParser;
 
-public class EinsToolsConfiguration : IConfigurationProvider
+internal class EinsToolsConfiguration : IConfigurationProvider
 {
     private readonly IConfiguration _config;
 

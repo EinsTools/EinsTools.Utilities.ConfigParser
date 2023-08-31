@@ -5,13 +5,41 @@
         <ImplicitUsings>enable</ImplicitUsings>
         <Nullable>enable</Nullable>
         <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
-        <Version>1.0.2</Version>
+        <Version>0.0.1</Version>
         <PackageId>EinsTools.Utilities.ConfigParser</PackageId>
+        <LangVersion>Latest</LangVersion>
+        <Authors>EinsTools</Authors>
+        <Company>EinsTools</Company>
+        <PackageId>EinsTools.Utilities.ConfigParser</PackageId>
+        <PackageReadmeFile>README.md</PackageReadmeFile>
+        <PackageProjectUrl>https://github.com/EinsTools/EinsTools.Utilities.ConfigParser</PackageProjectUrl>
+        <IncludeSymbols>true</IncludeSymbols>
+        <SymbolPackageFormat>snupkg</SymbolPackageFormat>
+        <Copyright>EinsTools</Copyright>
+        <Authors>EinsTools</Authors>
+        <PackageTags>Utilities, Configuration, Microsoft.Extensions.Configuration, Reference</PackageTags>
+        <PackageLicenseExpression>BSD-3-Clause</PackageLicenseExpression>
+        <GenerateDocumentationFile>True</GenerateDocumentationFile>
     </PropertyGroup>
 
     <ItemGroup>
-      <PackageReference Include="EinsTools.Utilities.StringHelper" Version="0.0.3-rc.18" />
-      <PackageReference Include="Microsoft.Extensions.Configuration" Version="7.0.0" />
+        <None Include="../README.md" Pack="true" PackagePath="/"/>
+        <None Include="../LICENSE" Pack="true" PackagePath=""/>
     </ItemGroup>
+
+    <ItemGroup>
+        <PackageReference Include="EinsTools.Utilities.StringHelper" Version="0.0.3-rc.18"/>
+        <PackageReference Include="Microsoft.Extensions.Configuration" Version="7.0.0"/>
+    </ItemGroup>
+    
+    <Target Name="PreparePackageReleaseNotesFromFile" BeforeTargets="GenerateNuspec">
+        <ReadLinesFromFile File="../RELEASENOTES.txt">
+            <Output TaskParameter="Lines" ItemName="ReleaseNoteLines"/>
+        </ReadLinesFromFile>
+        <PropertyGroup>
+            <PackageReleaseNotes>@(ReleaseNoteLines, '%0a')</PackageReleaseNotes>
+        </PropertyGroup>
+    </Target>
+
 
 </Project>

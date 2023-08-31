@@ -1,3 +1,3 @@
 ﻿namespace EinsTools.Utilities.ConfigParser;
 
-public record StringLiteral(string Value) : StringValue;
+internal record StringLiteral(string Value) : StringValue;

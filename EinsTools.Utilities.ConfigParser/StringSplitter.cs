@@ -4,7 +4,7 @@ using System.Text.Json;
 
 namespace EinsTools.Utilities.ConfigParser;
 
-public static class StringSplitter
+internal static class StringSplitter
 {
     public static ImmutableList<StringValue> Split(string input)
     {
