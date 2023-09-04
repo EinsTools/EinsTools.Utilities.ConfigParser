@@ -213,7 +213,8 @@ public class TestConfiguration
                 { "C", "$(file=A)" },
                 { "D", "$(FILE=A)" },
                 { "E", "$(file=NOT_EXISTING)" },
-                { "F", "$(file=B)" }
+                { "F", "$(file=B)" },
+                { "G", $"$(file= |{tempFile})"}
             };
         
             var baseCfg = new ConfigurationBuilder()
@@ -233,6 +234,7 @@ public class TestConfiguration
             {
                 var _ = cfg["F"];
             });
+            Assert.That(cfg["G"], Is.EqualTo(guidName));
         }
         finally
         {

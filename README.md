@@ -78,13 +78,21 @@ The value of C will be "Hello Goodbye!".
 
 You can prefix a reference with the strings "ref=", "env=" or "file=".
 
-"ref=" will reference a value from the configuration file. This is the default behaviour, if no prefix is used.
-"env=" will reference a value from the environment variables.
-"file=" will reference a value from a file. The value behind the prefix will be interpreted as a reference to
+- "ref=" will reference a value from the configuration file. This is the default behaviour, if no prefix is used.
+- "env=" will reference a value from the environment variables.
+- "file=" will reference a value from a file. The value behind the prefix will be interpreted as a reference to
 another value in the configuration file, which should hold the file name.
 
-❗ You cannot specify a file name in the "file=" directive directly. You have to reference another value that
-holds the file name.
+❗ If you want to specify a file name in the "file=" directive directly, you have to add a pipe character before
+the file name. For example:
+
+```json
+{
+  "A": "./test.txt",
+  "B": "$(file=A)",
+  "C": "$(file= |./test.txt)"
+}
+```
 
 Whitespace between the prefix and the reference will be ignored. So `$(env = PATH)` will work as well as
 `$(env=PATH)`.
@@ -95,7 +103,7 @@ For example:
 {
   "A": "./test.txt",
   "B": "$(env=PATH)",
-  "C": "$(file=C)"
+  "C": "$(file=A)"
 }
 ```
 
