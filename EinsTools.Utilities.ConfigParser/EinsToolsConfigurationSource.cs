@@ -33,4 +33,16 @@ public static class ConfigurationBuilderExtension
     public static IConfigurationBuilder AddEinsToolsConfiguration(this IConfigurationBuilder builder,
         IConfiguration configuration) =>
         builder.Add(new EinsToolsConfigurationSource(configuration));
+
+    /// <summary>
+    /// Function replaces the configuration manager's sources
+    /// with a new EinsTools configuration source based on the given configuration.
+    /// </summary>
+    public static void ReplaceWithEinsToolsConfiguration(this ConfigurationManager manager,
+        IConfiguration configuration)
+    {
+        manager.Sources.Clear();
+        manager.Sources.Add(new EinsToolsConfigurationSource(configuration));
+    }
 }
+

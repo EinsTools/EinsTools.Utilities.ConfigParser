@@ -23,18 +23,18 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <None Include="../README.md" Pack="true" PackagePath="/"/>
-        <None Include="../LICENSE" Pack="true" PackagePath=""/>
+        <None Include="../README.md" Pack="true" PackagePath="/" />
+        <None Include="../LICENSE" Pack="true" PackagePath="" />
     </ItemGroup>
 
     <ItemGroup>
-        <PackageReference Include="EinsTools.Utilities.StringHelper" Version="0.0.3-rc.18"/>
-        <PackageReference Include="Microsoft.Extensions.Configuration" Version="7.0.0"/>
+        <PackageReference Include="EinsTools.Utilities.StringHelper" Version="0.0.3-rc.18" />
+        <PackageReference Include="Microsoft.Extensions.Configuration" Version="7.0.0" />
     </ItemGroup>
     
     <Target Name="PreparePackageReleaseNotesFromFile" BeforeTargets="GenerateNuspec">
         <ReadLinesFromFile File="../RELEASENOTES.txt">
-            <Output TaskParameter="Lines" ItemName="ReleaseNoteLines"/>
+            <Output TaskParameter="Lines" ItemName="ReleaseNoteLines" />
         </ReadLinesFromFile>
         <PropertyGroup>
             <PackageReleaseNotes>@(ReleaseNoteLines, '%0a')</PackageReleaseNotes>

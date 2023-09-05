@@ -157,3 +157,30 @@ var cfg = new ConfigurationBuilder()
 ```
 
 The cfg variable will now contain the parsed configuration. You can use it as usual.
+
+For ASP.NET applications, you may want to use the 
+
+```csharp
+public static void ReplaceWithEinsToolsConfiguration(this ConfigurationManager manager,
+        IConfiguration configuration)
+```
+
+extension method. This replaces the configuration manager's sources
+with a new EinsTools configuration source based on the given configuration.
+
+The usage could look like this:
+
+```csharp
+var builder = WebApplication
+    .CreateBuilder(args);
+ 
+var config = new ConfigurationBuilder()
+    .SetBasePath(AppContext.BaseDirectory)
+    .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
+    .AddJsonFile($"appsettings.{builder.Environment.EnvironmentName}.json", optional: true,
+        reloadOnChange: true)
+    .AddEnvironmentVariables()
+    .Build();
+configBuilder.Configuration.ReplaceWithEinsToolsConfiguration(config);
+builder.Configuration.AddEinsToolsConfiguration(configBuilder.Build());
+```
